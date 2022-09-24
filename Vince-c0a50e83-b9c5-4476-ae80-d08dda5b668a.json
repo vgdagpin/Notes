@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "id": "c0a50e83-b9c5-4476-ae80-d08dda5b668a",
+    "name": "Vince"
+  },
+  "whitespace": {
+    "spacesOrTabs": "tabsIfPossible",
+    "wrapLinesLongerThan": 240,
+    "newLines": {
+      "preserveExistingEmptyLinesAfterBatchSeparator": false
+    }
+  },
+  "lists": {
+    "alignItemsAcrossClauses": false,
+    "alignItemsToTabStops": true,
+    "placeCommasBeforeItems": true,
+    "addSpaceBeforeComma": true
+  },
+  "parentheses": {
+    "indentParenthesesContents": true,
+    "collapseShortParenthesisContents": true,
+    "collapseParenthesesShorterThan": 120,
+    "addSpacesInsideParentheses": true
+  },
+  "casing": {
+    "reservedKeywords": "uppercase",
+    "builtInFunctions": "uppercase",
+    "builtInDataTypes": "uppercase",
+    "useObjectDefinitionCase": true
+  },
+  "dml": {
+    "addNewLineAfterDistinctAndTopClauses": true,
+    "collapseShortStatements": true,
+    "collapseStatementsShorterThan": 75,
+    "collapseShortSubqueries": true,
+    "collapseSubqueriesShorterThan": 75
+  },
+  "ddl": {
+    "parenthesisStyle": "expandedToStatement",
+    "indentParenthesesContents": true,
+    "alignDataTypesAndConstraints": true,
+    "placeConstraintColumnsOnNewLines": "ifLongerOrMultipleColumns",
+    "collapseShortStatements": true,
+    "collapseStatementsShorterThan": 75
+  },
+  "controlFlow": {
+    "collapseShortStatements": true,
+    "collapseStatementsShorterThan": 78
+  },
+  "cte": {
+    "parenthesisStyle": "expandedToStatement",
+    "indentContents": true,
+    "placeNameOnNewLine": true,
+    "columnAlignment": "indented",
+    "placeAsOnNewLine": false
+  },
+  "variables": {
+    "placeEqualsSignOnNewLine": true
+  },
+  "joinStatements": {
+    "join": {
+      "keywordAlignment": "indented"
+    },
+    "on": {
+      "keywordAlignment": "indented",
+      "conditionAlignment": "indented"
+    }
+  },
+  "insertStatements": {
+    "values": {
+      "parenthesisStyle": "expandedIndented",
+      "indentContents": true,
+      "placeSubsequentValuesOnNewLines": "always"
+    }
+  },
+  "functionCalls": {
+    "addSpacesAroundParentheses": true,
+    "addSpacesAroundArgumentList": true
+  },
+  "caseExpressions": {
+    "placeExpressionOnNewLine": false,
+    "collapseCaseExpressionsShorterThan": 75
+  },
+  "operators": {
+    "andOr": {
+      "alignment": "rightAligned"
+    },
+    "between": {
+      "placeOnNewLine": false
+    },
+    "in": {
+      "alignment": "indented",
+      "placeFirstValueOnNewLine": "ifLongerThanMaxLineLength",
+      "placeSubsequentValuesOnNewLines": "never",
+      "addSpaceAroundInContents": true
+    }
+  }
+}
