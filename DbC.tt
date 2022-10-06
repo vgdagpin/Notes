@@ -1,0 +1,169 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ output extension=".cs" #>
+<#
+var t4File = this.Host.TemplateFile;
+var entitiesPath= Path.GetDirectoryName(t4File);
+var configPath = Path.ChangeExtension(t4File, "xml");
+
+var xDoc = XDocument.Load(configPath);
+var xConfig = (from c in xDoc.Descendants("root")
+                select new
+                {
+                    DbContext = c.Elements("DbContext")
+                        .Select(idbc => new
+                        {
+                            Name = idbc.Element("Name").Value,
+                            Namespace = idbc.Element("Namespace").Value
+                        })
+                        .FirstOrDefault(),
+                    Entities = c.Elements("Entities")
+                        .Select(ents => new
+                        {
+                            Path = ents.Element("Path").Value,
+                            Namespaces = ents.Elements("Namespaces")
+                                .Elements("Namespace")    
+                                .Select(ns => ns.Value)
+                                .ToArray(),
+                            ExcludedFiles = ents.Elements("ExcludedEntities")
+                                .Elements("ExcludedEntity")
+                                .Select(ns => ns.Value)
+                                .ToArray(),
+                            Prefixes = ents.Elements("Prefixes")
+                                .Elements("Prefix")
+                                .Select(ns => ns.Value)
+                                .ToArray(),
+                            ExcludedPrefixes = ents.Elements("ExcludedPrefixes")
+                                .Elements("ExcludedPrefix")
+                                .Select(ns => ns.Value)
+                                .ToArray()
+                        })
+                        .FirstOrDefault()
+                })
+                .FirstOrDefault();
+                             
+var entitiesDirectory = Path.GetFullPath(Path.Combine(entitiesPath, xConfig.Entities.Path));
+var excludedPath = xConfig.Entities.ExcludedFiles;                 
+var excludedTypes = excludedPath != null
+    ? excludedPath.Select(a => Path.GetFullPath(Path.Combine(entitiesDirectory, a)))
+    : new List<string>().ToArray();
+var entities = Directory.GetFiles(entitiesDirectory, "*.cs", SearchOption.AllDirectories)
+    .OrderBy(a => Path.GetFileNameWithoutExtension(a));
+var prefixes = xConfig.Entities.Prefixes;
+var excludedPrefixes = xConfig.Entities.ExcludedPrefixes;
+
+#>
+using System;
+using System.Linq;
+
+using Microsoft.EntityFrameworkCore;
+
+<# foreach (var ns in xConfig.Entities.Namespaces) { 
+#>
+using <#= ns #>;
+<# } #>
+
+/*
+Do not modify this file! This is auto generated!
+Any changes to this file will be gone when template gets generated again.
+Version: 2.0
+*/
+
+namespace <#= xConfig.DbContext.Namespace #>
+{
+    public class <#= xConfig.DbContext.Name #> : DbContext
+    {
+        public Guid UID { get; } = Guid.NewGuid();
+        public bool HasSeedData { get; set; }
+
+        #region DbSet
+<# foreach (var eachFile in entities) 
+{ 
+    if (excludedTypes.Contains(eachFile)) continue; 
+
+    if (excludedTypes.Contains(eachFile))
+    {
+            continue;
+    }
+
+    if (eachFile.EndsWith(".Configuration.cs")
+        || eachFile.EndsWith(".Seeder.cs"))
+    {
+        continue;
+    }
+        
+    var excludeThis = false;
+    foreach (var excludedPrefix in excludedPrefixes)
+    {
+        if (Path.GetFileName(eachFile).StartsWith(excludedPrefix))
+        {
+            excludeThis = true;
+            continue;
+        }
+    }
+
+    if (excludeThis)
+    {
+        continue;
+    }
+#>
+        public DbSet<<#= GetEntityType(eachFile) #>> <#= GetEntityName(eachFile, prefixes, pluralized:true) #> { get; set; }
+<# } #>
+        #endregion
+
+        public <#= xConfig.DbContext.Name #>(DbContextOptions dbContextOpt) : base(dbContextOpt) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.ApplyConfigurationsFromAssembly(typeof(<#= xConfig.DbContext.Name #>).Assembly);
+
+        public virtual void BulkSaveChanges() => SaveChanges();
+    }
+}<#+
+
+string GetEntityType(string filePath)
+{
+    return Path.GetFileNameWithoutExtension(filePath);
+}
+
+string GetEntityName(string filePath, string[] prefixes, bool pluralized = false)
+{
+    var temp = Path.GetFileNameWithoutExtension(filePath);
+
+    foreach (var prefix in prefixes)
+    {
+        if (temp.StartsWith(prefix))
+        {
+            temp = temp.Substring(prefix.Length);
+        }
+    }    
+
+    if (pluralized)
+    {
+        return Pluralize(temp);
+    }
+
+    return temp;
+}
+
+string Pluralize(string input)
+{
+    string _retVal = input ?? "";
+
+    if (_retVal.Trim() == "") return "";
+    if(_retVal.EndsWith("Data")) return _retVal;
+    if(_retVal.EndsWith("ch")) return _retVal + "es";
+    if(_retVal.EndsWith("sis")) return _retVal.Substring(0, _retVal.Length - 3) + "ses";
+    if  (_retVal.EndsWith("s")) return _retVal + "es";
+    if (_retVal.EndsWith("ay")) return _retVal + "s";
+    if (_retVal.EndsWith("y")) return _retVal.Substring(0, _retVal.Length - 1) + "ies";
+
+    return _retVal + "s";
+}
+#>
