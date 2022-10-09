@@ -77,7 +77,10 @@ Function XReplace-Contents {
     # Replace Contents
     Get-ChildItem -Path $TargetPath -Recurse -File | ForEach-Object {       
         Try {
-            ((Get-Content -path $_.FullName -Raw) -replace $textToSearch,$textToReplace) | Set-Content -Encoding UTF8 -Path $_.FullName -NoNewline
+            $content = (Get-Content -path $_.FullName -Raw);
+            if ($content -like "*$($textToSearch)*") {
+                ($content -replace $textToSearch,$textToReplace) | Set-Content -Encoding UTF8 -Path $_.FullName -NoNewline
+            }
         } Catch {
             Write-Host "Error while replacing content"
         }
