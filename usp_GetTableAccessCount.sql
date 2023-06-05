@@ -5,13 +5,14 @@ BEGIN
 		CREATE TABLE ##TableAccessCount ( RunNo INT NOT NULL, TableName NVARCHAR(255) NOT NULL, AccessCount INT NOT NULL )
 
 
-
 	DECLARE @lastId INT
 
 	SELECT @lastId =  ISNULL ( MAX ( tac.RunNo ), 0 ) FROM ##TableAccessCount  tac
 
 	IF @createSnapshot = 1
 	BEGIN
+		DELETE FROM ##TableAccessCount
+
 		INSERT INTO ##TableAccessCount ( RunNo, TableName, AccessCount )
 		SELECT	@lastId + 1 [RunNo]
 			  , t.table_name
@@ -45,6 +46,7 @@ BEGIN
 			   AND	t2.table_name = tac.TableName
 		WHERE (	  tac.RunNo IS NULL OR tac.AccessCount !=  t2.total_accesses )
 		  AND	t2.table_name NOT IN ( 'adm.tbl_MigrationHistory' )
+		ORDER BY t2.total_accesses - ISNULL ( tac.AccessCount, 0 ) DESC
 	END
 END
 GO
