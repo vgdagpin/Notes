@@ -1,0 +1,12 @@
+$PROFILE
+
+New-Item -ItemType File -Path $PROFILE
+
+Import-Module "...\Remove Package Reference in csproj.ps1"
+Import-Module "...\Remove-SqlDoubleSpace.ps1"
+Set-Alias -Name tf -Value "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\TF.exe"
+
+
+Get-ChildItem -Filter "*.sql" -Path "Database" -Recurse
+
+Get-ChildItem -Filter "case_*.sql" -Path "Database/dbo/Tables" -Recurse | ForEach-Object { Remove-SqlDoubleSpace -file $_.FullName }
