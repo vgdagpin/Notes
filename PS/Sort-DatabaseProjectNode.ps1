@@ -1,4 +1,4 @@
-$dbProjPath = "C:\SourceCode_clients\Nestle\BenefitConnect\Development\Solution\Database\Database.sqlproj" 
+$dbProjPath = "...\Database.sqlproj" 
 $xDoc = [System.Xml.Linq.XDocument]::Load($dbProjPath) 
 
 foreach ($itemGroup in $xDoc.Root.Elements().Where({ $_.Name.LocalName -eq "ItemGroup" })) 
