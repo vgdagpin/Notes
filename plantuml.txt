@@ -1,0 +1,36 @@
+@startuml
+scale 350 width
+hide empty description
+[*] --> CalculatorManager
+
+state CalculatorManager{
+  state c <<choice>>
+  [*] --> Instantiate
+  Instantiate --> CalcFields
+  CalcFields --> DetectEvent
+  DetectEvent --> c
+  c --> CalcBenefits : New Event
+  c --> ExitCalc : No Event
+}
+
+state CalcBenefits {
+  state ElectionHelper {
+
+  }
+}
+
+state ExitCalc {
+
+}
+
+state DetectEvent {
+  [*] --> NewValueSelection
+  NewValueSelection --> NewValuePreview : EvNewValue
+  NewValuePreview --> NewValueSelection : EvNewValueRejected
+  NewValuePreview --> NewValueSelection : EvNewValueSaved
+
+  state NewValuePreview {
+     State1 -> State2
+  }
+}
+@enduml
