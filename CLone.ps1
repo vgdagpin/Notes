@@ -9,7 +9,7 @@ $targetPath = 'C:\Working Directory\Github\vgdagpin\Notes\Clone\Sample Clone'
 $textToSearch = 'Document'
 $textToReplace = 'Baso'
 $isCaseSensitive = $true
-$replaceSourcePath = $false
+$replaceSourcePath = $true
 
 $exclude = @(".vs", ".git", "obj", "bin", "Clone-Project.ps1", "node_modules", "packages", "Packages.zip", "lib")
 
@@ -37,14 +37,38 @@ Function Copy-CloneItems {
         $sourceFiles = Get-ChildItem -Path $Path -Recurse -Exclude $Exclude
 
         foreach ($item in $sourceFiles) {
-            $testOutPath = $Item.FullName.Replace($Path, $Destination)
+            $testOutPath = $item.FullName.Replace($Path, $Destination)
 
             if (Test-Path -Path $testOutPath) {
-                if ($Item.PSIsContainer -eq $false) {
-                    Remove-Item -Path $Item.FullName -Force
+                if ($item.PSIsContainer -eq $false) {
+                    Remove-Item -Path $item.FullName -Force
                 }
             }
         }
+
+        $hasMoreItems = $false;
+
+        do {
+            $hasMoreItems = $false;
+
+            $sourceFolders = Get-ChildItem -Path $Path -Directory -Recurse -Exclude $Exclude
+
+            foreach ($folder in $sourceFolders) {
+                $testOutPath = $folder.FullName.Replace($Path, $Destination)
+    
+                if (Test-Path -Path $testOutPath) {
+                    if ($folder.PSIsContainer -eq $true) {
+                        $folderFiles = Get-ChildItem -Path $folder.FullName
+    
+                        if ($folderFiles.Count -eq 0) {
+                            Remove-Item -Path $folder.FullName -Force
+
+                            $hasMoreItems = $true;
+                        }
+                    }
+                }
+            }
+        } while ($hasMoreItems);
     }
 }
 
