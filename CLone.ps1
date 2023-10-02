@@ -12,7 +12,7 @@ $isCaseSensitive = $true
 
 $exclude = @(".vs", ".git", "obj", "bin", "Clone-Project.ps1", "node_modules", "packages", "Packages.zip", "lib")
 
-Function XCopy-Item {
+Function Copy-CloneItems {
     param (
         [string]$Path,
         [string]$Destination,
@@ -28,11 +28,11 @@ Function XCopy-Item {
     # Do it recursively excluding from the list
     Get-ChildItem -Path $Path -Directory -Exclude $Exclude | 
         ForEach-Object {
-            XCopy-Item -Path "$($_.FullName)\" -Destination "$($Destination)\$($_.FullName.Substring($Path.Length))\" -Exclude $Exclude            
+            Copy-CloneItems -Path "$($_.FullName)\" -Destination "$($Destination)\$($_.FullName.Substring($Path.Length))\" -Exclude $Exclude            
         }
 }
 
-Function XRename-Items {
+Function Rename-CloneItems {
     param (
         [string]$TargetPath,
         [string]$Search,
@@ -69,7 +69,7 @@ Function XRename-Items {
     }
 }
 
-Function XReplace-Contents {
+Function Update-CloneContents {
     param (
         [string]$TargetPath,
         [string]$Search,
@@ -90,6 +90,6 @@ Function XReplace-Contents {
     }
 }
 
-XCopy-Item -Path $templatePath -Destination $targetPath -Exclude $exclude
-XRename-Items -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace -IsCaseSensitive $isCaseSensitive
-XReplace-Contents -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace -IsCaseSensitive $isCaseSensitive
+Copy-CloneItems -Path $templatePath -Destination $targetPath -Exclude $exclude
+Rename-CloneItems -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace -IsCaseSensitive $isCaseSensitive
+Update-CloneContents -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace -IsCaseSensitive $isCaseSensitive
