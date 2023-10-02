@@ -4,10 +4,10 @@
 #$textToSearch = Read-Host 'Enter the text you want to replace'
 #$projectName = Read-Host 'Enter the text you want to replace it with'
 
-$sourcePath = 'C:\Working Directory\Github\vgdagpin\Notes\Clone\Sample'
-$targetPath = 'C:\Working Directory\Github\vgdagpin\Notes\Clone\Sample Clone'
-$textToSearch = 'Document'
-$textToReplace = 'Baso'
+$sourcePath = 'C:\Working Directory\DevOps\vgdagpin\Aerish'
+$targetPath = 'C:\Working Directory\DevOps\vgdagpin\Aerish Clone'
+$textToSearch = 'WorkerService'
+$textToReplace = 'Repository'
 $isCaseSensitive = $true
 $replaceSourcePath = $true
 
