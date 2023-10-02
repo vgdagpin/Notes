@@ -22,10 +22,10 @@ Function Copy-CloneItems {
     )
 
     # Copy item from this folder to destination
-        Get-ChildItem -Path $Path -Exclude $Exclude |
-            Copy-Item -Destination {
-                Join-Path $Destination $_.FullName.Substring($Path.length)
-            }
+    Get-ChildItem -Path $Path -Exclude $Exclude |
+        Copy-Item -Destination {
+            Join-Path $Destination $_.FullName.Substring($Path.length)
+        }
 
     # Do it recursively excluding from the list
     Get-ChildItem -Path $Path -Directory -Exclude $Exclude | 
@@ -48,6 +48,8 @@ Function Copy-CloneItems {
 
         $hasMoreItems = $false;
 
+        # need to do recursive this ways because 
+        # some folders have deep heirarchy and we need to delete it one by one
         do {
             $hasMoreItems = $false;
 
@@ -173,3 +175,9 @@ Function Update-CloneContents {
 Copy-CloneItems -Path $sourcePath -Destination $targetPath -Exclude $exclude -ReplaceSourcePath $replaceSourcePath
 Rename-CloneItems -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace -IsCaseSensitive $isCaseSensitive
 Update-CloneContents -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace -IsCaseSensitive $isCaseSensitive
+
+if ($replaceSourcePath) {
+    Copy-CloneItems -Path $targetPath -Destination $sourcePath -Exclude $exclude -ReplaceSourcePath $replaceSourcePath
+
+    Remove-Item -Path $targetPath -Force
+}
