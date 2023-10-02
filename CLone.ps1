@@ -4,10 +4,11 @@
 #$textToSearch = Read-Host 'Enter the text you want to replace'
 #$projectName = Read-Host 'Enter the text you want to replace it with'
 
-$templatePath = 'C:\Working Directory\DevOps\vgdagpin\Aerish Clone'
+$templatePath = 'C:\Working Directory\DevOps\vgdagpin\Aerish'
 $targetPath = 'C:\Working Directory\DevOps\vgdagpin\Aerish Clone 2'
-$textToSearch = 'Repositories'
-$textToReplace = 'Services'
+$textToSearch = 'WorkerService'
+$textToReplace = 'Repository'
+$isCaseSensitive = $true
 
 $exclude = @(".vs", ".git", "obj", "bin", "Clone-Project.ps1", "node_modules", "packages", "Packages.zip", "lib")
 
@@ -35,7 +36,8 @@ Function XRename-Items {
     param (
         [string]$TargetPath,
         [string]$Search,
-        [string]$Replace
+        [string]$Replace,
+        [bool]$IsCaseSensitive
     )
 
     # Rename directories
@@ -71,7 +73,8 @@ Function XReplace-Contents {
     param (
         [string]$TargetPath,
         [string]$Search,
-        [string]$Replace
+        [string]$Replace,
+        [bool]$IsCaseSensitive
     )
 
     # Replace Contents
@@ -88,5 +91,5 @@ Function XReplace-Contents {
 }
 
 XCopy-Item -Path $templatePath -Destination $targetPath -Exclude $exclude
-XRename-Items -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace
-XReplace-Contents -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace
+XRename-Items -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace -IsCaseSensitive $isCaseSensitive
+XReplace-Contents -TargetPath $targetPath -Search $textToSearch -Replace $textToReplace -IsCaseSensitive $isCaseSensitive
