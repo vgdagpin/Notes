@@ -1,0 +1,13 @@
+Documents
+Document
+
+dOcUment
+DOCUMENT
+
+document
+
+the quick brown Documents jumps over the lazy dog
+the quick brown Document jumps over the lazy dog
+the quick brown dOcUment jumps over the lazy dog
+the quick brown DOCUMENT jumps over the lazy dog
+the quick brown document jumps over the lazy dog

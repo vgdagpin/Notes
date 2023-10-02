@@ -4,10 +4,10 @@
 #$textToSearch = Read-Host 'Enter the text you want to replace'
 #$projectName = Read-Host 'Enter the text you want to replace it with'
 
-$templatePath = 'C:\Working Directory\DevOps\vgdagpin\Aerish'
-$targetPath = 'C:\Working Directory\DevOps\vgdagpin\Aerish Clone 2'
-$textToSearch = 'WorkerService'
-$textToReplace = 'Repository'
+$templatePath = 'C:\Working Directory\Github\vgdagpin\Notes\Clone\Sample'
+$targetPath = 'C:\Working Directory\Github\vgdagpin\Notes\Clone\Sample Clone'
+$textToSearch = 'Document'
+$textToReplace = 'Baso'
 $isCaseSensitive = $true
 
 $exclude = @(".vs", ".git", "obj", "bin", "Clone-Project.ps1", "node_modules", "packages", "Packages.zip", "lib")
@@ -42,25 +42,59 @@ Function Rename-CloneItems {
 
     # Rename directories
     Get-ChildItem -Path $TargetPath -Recurse -Directory | ForEach-Object  {
-        if ($_.FullName.Contains($Search)) {
-            $from = $_.FullName;
-            $to = $_.FullName.Replace($Search, $Replace);
-    
+        $proceed = $false
+        $from = $_.FullName;
+        $to = $_.FullName
+
+        if ($IsCaseSensitive) {
+            if ($_.FullName -clike "*$($Search)*") {
+                $to = $_.FullName -creplace $Search, $Replace
+                $proceed = $true;
+            }
+        }
+        else {
+            if ($_.FullName -like "*$($Search)*") {
+                $to = $_.FullName -replace $Search, $Replace
+                $proceed = $true;
+            }
+        }
+
+        if ($proceed) {
             Try {
+                Write-Host "Rename: $($from)"
+                Write-Host "To: $($to)"
+
                 Rename-Item -Path $from -NewName $to
             } Catch {
-                Write-Host "Error Copy Directory: $($from) to $($to)"
+                Write-Host "Error Copy File: $($from) to $($to)"
             }
         }
     }
 
     # Rename files
     Get-ChildItem -Path $TargetPath -Recurse -File | ForEach-Object  {
-        if ($_.FullName.Contains($Search)) {
-            $from = $_.FullName;
-            $to = $_.FullName.Replace($Search, $Replace);
-    
+        $proceed = $false
+        $from = $_.FullName;
+        $to = $_.FullName
+
+        if ($IsCaseSensitive) {
+            if ($_.FullName -clike "*$($Search)*") {
+                $to = $_.FullName -creplace $Search, $Replace
+                $proceed = $true;
+            }
+        }
+        else {
+            if ($_.FullName -like "*$($Search)*") {
+                $to = $_.FullName -replace $Search, $Replace
+                $proceed = $true;
+            }
+        }
+
+        if ($proceed) {
             Try {
+                Write-Host "Rename: $($from)"
+                Write-Host "To: $($to)"
+
                 Rename-Item -Path $from -NewName $to
             } Catch {
                 Write-Host "Error Copy File: $($from) to $($to)"
@@ -81,9 +115,18 @@ Function Update-CloneContents {
     Get-ChildItem -Path $TargetPath -Recurse -File | ForEach-Object {       
         Try {
             $content = (Get-Content -path $_.FullName -Raw);
-            if ($content -like "*$($textToSearch)*") {
-                ($content -replace $textToSearch,$textToReplace) | Set-Content -Encoding UTF8 -Path $_.FullName -NoNewline
+
+            if ($IsCaseSensitive) {
+                if ($content -clike "*$($textToSearch)*") {
+                    ($content -creplace $textToSearch,$textToReplace) | Set-Content -Encoding UTF8 -Path $_.FullName -NoNewline
+                }
             }
+            else {
+                if ($content -like "*$($textToSearch)*") {
+                    ($content -replace $textToSearch,$textToReplace) | Set-Content -Encoding UTF8 -Path $_.FullName -NoNewline
+                }
+            }
+            
         } Catch {
             Write-Host "Error while replacing content"
         }
