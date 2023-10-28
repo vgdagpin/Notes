@@ -1,0 +1,63 @@
+@startuml Client_SSO_to_EPortal_IdP
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+actor "Employee (Auth'd)" as UserIdP
+
+box "Client X"
+collections "Identity Provider" as Auth
+end box
+box "EPortal"
+collections "SAML Controller" as EPortalSAML
+end box
+box "API"
+collections "SAML Controller" as ApiSAML
+end box
+
+database    AerishDb    as DB
+
+
+
+
+UserIdP -> Auth : <font size=10>Click Aerish EPortal SSO
+
+Auth -> Auth : <font size=10>Generate SAML Attributes
+note left
+  <font size=9>ClientID 
+  <font size=9>EmployeeID 
+  <font size=9>Roles <i>(optional)</i>
+end note
+Auth -> ApiSAML : <font size=10>Send SAML Response
+note right
+  <font size=7>SAML/ClientSSO
+end note
+
+ApiSAML -> DB : <font size=10>Get Attributes
+note left
+  <font size=9>SecurityAccountID 
+  <font size=9>Roles <i>(if not provided from Client X)</i>
+  <font size=9>TimeZoneInfo
+  <font size=9>CultureInfo
+  <font size=9>AdditionalAttr
+end note
+return
+
+ApiSAML -> ApiSAML : <font size=10>Generate SAML Attributes
+note left
+  <font size=9>ClientID 
+  <font size=9>EmployeeID 
+  <font size=9>SecurityAccountID
+  <font size=9>Roles <i>(from Client X or Aerish)</i>
+  <font size=9>TimeZoneInfo
+  <font size=9>CultureInfo
+  <font size=9>AdditionalAttr
+end note
+
+ApiSAML -> EPortalSAML : <font size=10>Send SAML Response to EPortal
+note left
+  <font size=7>SAML/AssertionConsumerService
+end note
+
+EPortalSAML <- EPortalSAML : <font size=10>Create Cookie
+EPortalSAML -> UserIdP : <font size=10>Redirect to Home
+@enduml
