@@ -1,1 +1,1 @@
-https://teeledger-qa-ca-api.wonderfulcoast-1832aa92.southeastasia.azurecontainerapps.io/
+https://teeledger-p-ca-api.thankfulocean-f9391a7a.southeastasia.azurecontainerapps.io/
